@@ -12,6 +12,12 @@ export const cleanObject = (object?: {[key: string]: unknown}) => {
     return result;
 }
 
+export const useMount = (callback: () => void) => {
+    useEffect(() => {
+        callback();
+    }, []);
+}
+
 export const useDebounce = <V>(value: V, delay?: number) => {
     const [debounceValue, setDebounceValue] = useState(value);
 
