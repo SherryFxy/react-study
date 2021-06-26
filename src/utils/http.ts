@@ -52,12 +52,12 @@ export const useHttp = () => {
 }
 
 // 联合类型
-let myFavouriteNumber: string | number
-myFavouriteNumber = 9;
-myFavouriteNumber = 'jack'
-// 类型别名
-type FavouriteNumber = string | number
-let jackFavouriteNumber: FavouriteNumber = '6'
+// let myFavouriteNumber: string | number
+// myFavouriteNumber = 9;
+// myFavouriteNumber = 'jack'
+// // 类型别名
+// type FavouriteNumber = string | number
+// let jackFavouriteNumber: FavouriteNumber = '6'
 
 // 类型别名 在很多情况下可以和 interface 互换
 // interface Person {
@@ -68,11 +68,11 @@ let jackFavouriteNumber: FavouriteNumber = '6'
 
 // 类型别名，interface 在这种情况(联合类型)下没法替代type
 // interface 也没法实现 utility type
-type Person = {
-    name: string,
-    age: number
-}
-const xiaoming: Partial<Person> = {name: 'xiaoming'} // 可以没有名字或者年龄，可以为空
-const shenmiren: Omit<Person, 'name'> = {age: 8} // age必须有
-const shenmiren1: Omit<Person, 'name' | 'age'> = {} // age必须有
+// type Person = {
+//     name: string,
+//     age: number
+// }
+// const xiaoming: Partial<Person> = {name: 'xiaoming'} // 可以没有名字或者年龄，可以为空
+// const shenmiren: Omit<Person, 'name'> = {age: 8} // age必须有
+// const shenmiren1: Omit<Person, 'name' | 'age'> = {} // age必须有
 

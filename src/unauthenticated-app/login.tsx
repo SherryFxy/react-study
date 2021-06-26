@@ -4,7 +4,7 @@ import { Form, Input } from 'antd';
 import { LongButton } from './index';
 
 export const LoginScreen = () => {
-    const {login, user} = useAuth()
+    const {login} = useAuth()
     const handleSubmit = (values: {username: string, password: string}) => {
         // event.preventDefault();
         // const username = (event.currentTarget.elements[0] as HTMLInputElement).value

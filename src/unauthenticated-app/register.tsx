@@ -3,7 +3,7 @@ import { useAuth } from "context/auth-context"
 import {Form, Input, Button} from 'antd';
 
 export const RegisterScreen = () => {
-    const {register, user} = useAuth()
+    const {register} = useAuth()
     const handleSubmit = (values: {username: string, password: string}) => {
         // event.preventDefault();
         // const username = (event.currentTarget.elements[0] as HTMLInputElement).value

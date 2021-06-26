@@ -3,7 +3,7 @@ import { Row } from "components/lib"
 import { useAuth } from "context/auth-context"
 import { ProjectListScreen } from "screens/project-list";
 import {ReactComponent as SoftwareLogo} from 'assets/software-logo.svg';
-import { Dropdown, Menu } from "antd";
+import { Button, Dropdown, Menu } from "antd";
 
 /**
  * flex 和 grid 各自的应用场景
@@ -26,12 +26,12 @@ export const AuthenticatedApp = () => {
                 {/* <button>登出</button> */}
                 <Dropdown overlay={<Menu>
                     <Menu.Item key={'logout'}>
-                        <a onClick={logout}>登出</a>
+                        <Button type={'link'}  onClick={logout}>登出</Button>
                     </Menu.Item>
                 </Menu>}>
-                    <a onClick={e => e.preventDefault()}>
+                    <Button type={'link'} onClick={e => e.preventDefault()}>
                         Hi, {user?.name}
-                    </a>
+                    </Button>
                 </Dropdown>
             </HeaderRight>
         </Header>
