@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export const isFalsy = (value: unknown) => value === 0 ? false : !value
 
@@ -46,3 +46,23 @@ export const useArray = <T>(initArray: T[]) => {
         add: (item: T) => setValue([...value, item])
     }
 }
+
+export const useDocumentTitle = (title: string, keepOnUnMount: boolean = true) => {
+    // useRef 返回一个可变的ref对象，其 .current 属性被初始化为传入放入参数(initialValue)。
+    // 返回的ref 对象在组件的整个生命周期内保持不变
+    const oldTitle = useRef(document.title).current;
+
+    useEffect(() => {
+        document.title = title;
+    }, [title])
+
+    useEffect(() => {
+        return () => {
+            if (!keepOnUnMount) {
+                document.title = oldTitle
+            }
+        }
+    }, [keepOnUnMount, oldTitle])
+}
+
+export const resetRoute = () => window.location.href = window.location.origin

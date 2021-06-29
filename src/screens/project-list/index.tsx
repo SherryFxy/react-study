@@ -1,22 +1,22 @@
 import { List } from "./list"
 import { SearchPanel } from "./search-panel"
 import { useState } from "react"
-import { useDebounce } from "utils"
+import { useDebounce, useDocumentTitle } from "utils"
 import styled from "@emotion/styled"
 import { Typography } from "antd"
 import { useProjects } from "utils/project"
 import { useUsers } from "utils/user"
+import { useUrlQueryParam } from "utils/url"
+import { useProjectSearchParams } from "./util"
 
 export const ProjectListScreen = () => {
-    // const [users, setUsers] = useState([])
-    const [param, setParam] = useState({
-        name: '',
-        personId: ''
-    })
-    const debounceParam = useDebounce(param, 200);
-    // const [list, setList] = useState([])
-    const { isLoading, error, data: list } = useProjects(debounceParam)
+    useDocumentTitle('项目列表', false)
+
+    // 基本类型，组件状态，都可以放在依赖里；非组建状态对象，绝不可以放到依赖里
+    const [param, setParam] = useProjectSearchParams()
+    const { isLoading, error, data: list, retry } = useProjects(useDebounce(param, 200))
     const { data: users } = useUsers()
+
 
     // useEffect(() => {
     //     run(client('projects', {data: cleanObject(debounceParam)}));
@@ -30,7 +30,7 @@ export const ProjectListScreen = () => {
         <h1>项目列表</h1>
         <SearchPanel users={users || []} param={param} setParam={setParam} />
         {error ? <Typography.Text type={'danger'}>{error.message}</Typography.Text> : null}
-        <List loading={isLoading} users={users || []} dataSource={list || []} />
+        <List refrash={retry} loading={isLoading} users={users || []} dataSource={list || []} />
     </Container>
 }
 

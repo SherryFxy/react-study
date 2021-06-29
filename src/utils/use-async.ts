@@ -22,6 +22,12 @@ export const useAsync = <D>(initialState?: State<D>, initialConfig?: typeof defa
         ...defaultInitialState,
         ...initialState
     })
+    // 惰性初始state：initialState参数只会在组件的初始渲染中起作用，后续渲染时会被忽略。
+    // 如果初试state需要通过复杂计算获得，则可传入一个函数，
+    // 在函数中计算并返回初始的state，此函数只在初始渲染时被调用
+    const [retry, setRetry] = useState(() => () => {
+
+    })
 
     const setData = (data: D) => setState({
         data,
@@ -35,10 +41,15 @@ export const useAsync = <D>(initialState?: State<D>, initialConfig?: typeof defa
         data: null
     })
 
-    const run = (promise: Promise<D>) => {
+    const run = (promise: Promise<D>, runConfig?: {retry: () => Promise<D>}) => {
         if (!promise || !promise.then){
             throw new Error('请传入 Promise 类型数据')
         }
+        setRetry(() => () => {
+            if (runConfig?.retry) {
+                run(runConfig?.retry(), runConfig)
+            }
+        });
         setState({ ...state, stat: 'loading' })
         return promise.then((data: D) => {
             setData(data)
@@ -51,6 +62,11 @@ export const useAsync = <D>(initialState?: State<D>, initialConfig?: typeof defa
             // return error
         })
     }
+
+    // const retry = () => {
+    //     run();
+    // }
+
     return {
         isIdle: state.stat === 'idle',
         isLoading: state.stat === 'loading',
@@ -59,6 +75,8 @@ export const useAsync = <D>(initialState?: State<D>, initialConfig?: typeof defa
         run,
         setData,
         setError,
+        // retry 被调用时，重新跑一遍run，让state刷新一遍
+        retry,
         ...state
     }
 }
