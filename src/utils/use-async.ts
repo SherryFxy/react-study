@@ -1,4 +1,5 @@
-import { useState } from "react"
+import { useCallback, useState } from "react"
+import { useMountedRef } from "utils";
 
 interface State<D> {
     error: Error | null;
@@ -22,26 +23,25 @@ export const useAsync = <D>(initialState?: State<D>, initialConfig?: typeof defa
         ...defaultInitialState,
         ...initialState
     })
+    const mountedRef = useMountedRef()
     // 惰性初始state：initialState参数只会在组件的初始渲染中起作用，后续渲染时会被忽略。
     // 如果初试state需要通过复杂计算获得，则可传入一个函数，
     // 在函数中计算并返回初始的state，此函数只在初始渲染时被调用
-    const [retry, setRetry] = useState(() => () => {
+    const [retry, setRetry] = useState(() => () => {})
 
-    })
-
-    const setData = (data: D) => setState({
+    const setData = useCallback((data: D) => setState({
         data,
         stat: 'success',
         error: null
-    })
+    }), [])
 
-    const setError = (error: Error) => setState({
+    const setError = useCallback((error: Error) => setState({
         error,
         stat: 'error',
         data: null
-    })
+    }), [])
 
-    const run = (promise: Promise<D>, runConfig?: {retry: () => Promise<D>}) => {
+    const run = useCallback((promise: Promise<D>, runConfig?: {retry: () => Promise<D>}) => {
         if (!promise || !promise.then){
             throw new Error('请传入 Promise 类型数据')
         }
@@ -50,9 +50,10 @@ export const useAsync = <D>(initialState?: State<D>, initialConfig?: typeof defa
                 run(runConfig?.retry(), runConfig)
             }
         });
-        setState({ ...state, stat: 'loading' })
+        setState(prevState => ({ ...prevState, stat: 'loading' }));
         return promise.then((data: D) => {
-            setData(data)
+            if (mountedRef.current)
+            setData(data);
             return data
         }).catch(error => {
             console.log('error', error, error.message);
@@ -61,7 +62,7 @@ export const useAsync = <D>(initialState?: State<D>, initialConfig?: typeof defa
             if (config.throwOnError) return Promise.reject(error);
             // return error
         })
-    }
+    }, [config.throwOnError, mountedRef, setData, setError])
 
     // const retry = () => {
     //     run();
